@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#ff2e93">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Дорамы для Любимой 💖</title>
+<style>
+  :root {
+    --pink: #ff2e93;
+    --pink-light: #ff75b5;
+    --bg: #12091c;
+    --card: #1f1130;
+    --text: #ffffff;
+    --sub: #d4b8e8;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    margin: 0; padding: 0 0 90px 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg); color: var(--text);
+  }
+  header {
+    background: linear-gradient(135deg, #ff2e93, #9b2eff);
+    padding: 18px 16px;
+    border-radius: 0 0 24px 24px;
+    box-shadow: 0 6px 20px rgba(255,46,147,0.35);
+    position: sticky; top: 0; z-index: 100;
+  }
+  header h1 { margin: 0; font-size: 22px; text-align: center; }
+  .search-box {
+    display: flex; gap: 8px; margin-top: 12px;
+  }
+  .search-box input {
+    flex: 1; padding: 14px 16px; border-radius: 16px; border: none;
+    font-size: 16px; outline: none; background: rgba(255,255,255,0.95); color: #111;
+  }
+  .search-box button {
+    background: #fff; border: none; border-radius: 16px; width: 50px;
+    font-size: 22px; cursor: pointer;
+  }
+  .moods {
+    display: flex; overflow-x: auto; gap: 8px; padding: 14px 16px;
+    scrollbar-width: none;
+  }
+  .moods::-webkit-scrollbar { display: none; }
+  .mood-btn {
+    white-space: nowrap; padding: 10px 16px; border-radius: 20px;
+    background: var(--card); color: #fff; border: 1px solid #452768;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+  .mood-btn.active { background: var(--pink); border-color: var(--pink); }
+  .container { padding: 0 16px; }
+  .card {
+    background: var(--card); border-radius: 22px; padding: 16px;
+    margin-bottom: 16px; border: 1px solid #351d52;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.3);
+  }
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .title { font-size: 19px; font-weight: 800; margin: 0 0 4px 0; color: #fff; }
+  .meta { font-size: 13px; color: var(--sub); margin-bottom: 8px; }
+  .desc { font-size: 14px; color: #e8daf2; line-height: 1.45; margin-bottom: 14px; }
+  .badge {
+    background: #ffb800; color: #000; font-weight: 800; padding: 4px 9px;
+    border-radius: 12px; font-size: 13px; white-space: nowrap;
+  }
+  .big-play {
+    display: block; width: 100%; padding: 16px; border-radius: 16px;
+    background: linear-gradient(90deg, #ff2e93, #ff5e62);
+    color: #fff; font-size: 17px; font-weight: 800; text-align: center;
+    text-decoration: none; border: none; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(255,46,147,0.45);
+    margin-bottom: 10px;
+  }
+  .row-btns { display: flex; gap: 8px; }
+  .btn-sub {
+    flex: 1; padding: 12px; border-radius: 14px; border: 1px solid #4a2b70;
+    background: #2a1742; color: #fff; font-size: 14px; font-weight: 700; cursor: pointer;
+  }
+  .sites-bar {
+    display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap;
+  }
+  .site-chip {
+    flex: 1; text-align: center; padding: 8px 6px; border-radius: 10px;
+    background: #160b24; color: var(--sub); font-size: 12px; text-decoration: none;
+    border: 1px solid #351d52;
+  }
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: #190d29; border-top: 1px solid #3b205c;
+    display: flex; justify-content: space-around; padding: 10px 0; z-index: 200;
+  }
+  .nav-item {
+    background: none; border: none; color: var(--sub); font-size: 13px;
+    font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .nav-item.active { color: var(--pink-light); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>💖 Дорамы для Любимой</h1>
+  <div class="search-box">
+    <input type="text" id="q" placeholder="Найти сериал или актёра..." oninput="render()">
+    <button onclick="voiceSearch()" title="Голосовой поиск">🎤</button>
+  </div>
+</header>
+
+<div class="moods">
+  <button class="mood-btn active" onclick="setCat('all', this)">🔥 Все хиты</button>
+  <button class="mood-btn" onclick="setCat('boss', this)">😍 Красивый босс</button>
+  <button class="mood-btn" onclick="setCat('cry', this)">😭 Поплакать</button>
+  <button class="mood-btn" onclick="setCat('thriller', this)">🕵️‍♀️ Интриги и месть</button>
+  <button class="mood-btn" onclick="setCat('hist', this)">👑 Дворцы и магия</button>
+  <button class="mood-btn" onclick="randomPick()">🎲 Наугад!</button>
+</div>
+
+<div class="container" id="list"></div>
+
+<nav class="bottom-nav">
+  <button class="nav-item active" onclick="setTab('all', this)"><span>🏠</span>Каталог</button>
+  <button class="nav-item" onclick="setTab('fav', this)"><span>❤️</span>Мои сериалы</button>
+  <button class="nav-item" onclick="openSite('https://doramy.club')"><span>🌐</span>Doramy.club</button>
+  <button class="nav-item" onclick="openSite('https://doramalive.ru')"><span>🎬</span>DoramaLive</button>
+</nav>
+
+<script>
+const DRAMAS = [
+  {id:1, t:"Королева слёз", y:2024, c:"Корея", r:9.6, ep:16, cat:"cry", d:"Наследница миллиардов и её муж-юрист на грани развода, но внезапная новость переворачивает их чувства."},
+  {id:2, t:"Аварийная посадка любви", y:2019, c:"Корея", r:9.5, ep:16, cat:"cry", d:"Богатая наследница из Сеула падает на параплане в Северной Корее прямо в руки капитана спецназа."},
+  {id:3, t:"Деловое предложение", y:2022, c:"Корея", r:9.2, ep:12, cat:"boss", d:"Девушка идёт на свидание вслепую вместо подруги, а женихом оказывается её собственный молодой босс."},
+  {id:4, t:"Цветок зла", y:2020, c:"Корея", r:9.5, ep:16, cat:"thriller", d:"Идеальный муж и отец скрывает тёмное прошлое, а его жена-детектив начинает расследование."},
+  {id:5, t:"Гоблин (Токкэби)", y:2016, c:"Корея", r:9.6, ep:16, cat:"hist", d:"Бессмертный демон 900 лет ищет свою невесту и делит особняк с ироничным Жнецом Смерти."},
+  {id:6, t:"Хватай Сон Джэ и беги", y:2024, c:"Корея", r:9.5, ep:16, cat:"cry", d:"Фанатка переносится на 15 лет в прошлое, чтобы спасти жизнь любимому айдолу и изменить судьбу."},
+  {id:7, t:"Король земли", y:2023, c:"Корея", r:9.0, ep:16, cat:"boss", d:"Наследник сети роскошных отелей ненавидит фальшивые улыбки, пока не встречает лучшую сотрудницу."},
+  {id:8, t:"Слава (Триумф)", y:2023, c:"Корея", r:9.4, ep:16, cat:"thriller", d:"Гениально спланированная месть девушки обидчикам спустя годы после школы."},
+  {id:9, t:"Алые сердца: Корё", y:2016, c:"Корея", r:9.5, ep:20, cat:"hist", d:"Девушка из XXI века попадает в эпоху Корё в окружение прекрасных и опасных принцев."},
+  {id:10, t:"Что случилось с секретарём Ким", y:2018, c:"Корея", r:9.1, ep:16, cat:"boss", d:"Самовлюблённый вице-президент в панике, когда его идеальная секретарша решает уволиться."},
+  {id:11, t:"Скрытая любовь", y:2023, c:"Китай", r:9.5, ep:25, cat:"boss", d:"Нежная история девушки, с юности влюблённой в лучшего друга своего старшего брата."},
+  {id:12, t:"Разлука Орхидеи и Повелителя демонов", y:2022, c:"Китай", r:9.4, ep:36, cat:"hist", d:"Маленькая фея случайно пробуждает грозного Повелителя демонов и меняется с ним чувствами."},
+  {id:13, t:"Пентхаус", y:2020, c:"Корея", r:9.3, ep:21, cat:"thriller", d:"Безумные интриги, тайны и борьба за власть среди миллиардеров элитного небоскрёба."},
+  {id:14, t:"Мой демон", y:2023, c:"Корея", r:9.1, ep:16, cat:"boss", d:"Холодная наследница заключает фиктивный брак с 200-летним демоном, потерявшим свою силу."},
+  {id:15, t:"Потомки солнца", y:2016, c:"Корея", r:9.3, ep:16, cat:"cry", d:"Страстный роман капитана спецназа и талантливого врача-хирурга в горячей точке."},
+  {id:16, t:"Алхимия душ", y:2022, c:"Корея", r:9.5, ep:30, cat:"hist", d:"Душа великой воительницы оказывается заперта в слабом теле слепой служанки молодого мага."},
+  {id:17, t:"Винченцо", y:2021, c:"Корея", r:9.4, ep:20, cat:"thriller", d:"Харизматичный консильери итальянской мафии возвращается в Сеул и вершит правосудие по своим правилам."},
+  {id:18, t:"Светлый пепел луны", y:2023, c:"Китай", r:9.4, ep:40, cat:"hist", d:"Богиня отправляется на 500 лет назад, чтобы не дать принцу-заложнику стать Повелителем демонов."},
+  {id:19, t:"Выходи замуж за моего мужа", y:2024, c:"Корея", r:9.2, ep:16, cat:"thriller", d:"Обманутая жена получает второй шанс на 10 лет раньше и передаёт свою судьбу разлучнице."},
+  {id:20, t:"Истинная красота", y:2020, c:"Корея", r:9.1, ep:16, cat:"boss", d:"Девушка становится богиней красоты с помощью макияжа, но самый красивый парень школы узнаёт её секрет."}
+];
+
+let state = JSON.parse(localStorage.getItem('dorama_wife_v1') || '{}');
+let currentCat = 'all';
+let currentTab = 'all';
+
+function save() { localStorage.setItem('dorama_wife_v1', JSON.stringify(state)); }
+function getEp(id) { return (state[id] && state[id].ep) ? state[id].ep : 1; }
+function isFav(id) { return !!(state[id] && state[id].fav); }
+
+function nextEp(id, maxEp) {
+  if(!state[id]) state[id] = {ep:1, fav:true};
+  state[id].ep = Math.min(maxEp, (state[id].ep || 1) + 1);
+  state[id].fav = true;
+  save(); render();
+}
+
+function toggleFav(id) {
+  if(!state[id]) state[id] = {ep:1, fav:false};
+  state[id].fav = !state[id].fav;
+  save(); render();
+}
+
+function openSite(url) { window.open(url, '_blank'); }
+
+function watchNow(title, ep) {
+  const q = encodeURIComponent(title + " " + ep + " серия озвучка SoftBox смотреть онлайн");
+  window.open("https://ya.ru/video/search?text=" + q, "_blank");
+}
+
+function setCat(c, btn) {
+  currentCat = c;
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  render();
+}
+
+function setTab(t, btn) {
+  currentTab = t;
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  render();
+}
+
+function randomPick() {
+  const item = DRAMAS[Math.floor(Math.random() * DRAMAS.length)];
+  document.getElementById('q').value = item.t;
+  render();
+}
+
+function voiceSearch() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR) { alert("Нажмите на микрофон на клавиатуре телефона 🎤"); return; }
+  const r = new SR();
+  r.lang = 'ru-RU';
+  r.onresult = (e) => {
+    document.getElementById('q').value = e.results[0][0].transcript;
+    render();
+  };
+  r.start();
+}
+
+function render() {
+  const q = document.getElementById('q').value.toLowerCase().trim();
+  const box = document.getElementById('list');
+  const filtered = DRAMAS.filter(d => {
+    if(currentTab === 'fav' && !isFav(d.id)) return false;
+    if(currentCat !== 'all' && d.cat !== currentCat) return false;
+    if(q && !d.t.toLowerCase().includes(q) && !d.d.toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  box.innerHTML = filtered.map(d => {
+    const ep = getEp(d.id);
+    const fav = isFav(d.id);
+    const enc = encodeURIComponent(d.t);
+    return `
+      <div class="card">
+        <div class="card-top">
+          <div>
+            <h3 class="title">${d.t}</h3>
+            <div class="meta">${d.c} • ${d.y} • Серия ${ep} из ${d.ep}</div>
+          </div>
+          <span class="badge">⭐ ${d.r}</span>
+        </div>
+        <div class="desc">${d.d}</div>
+        <button class="big-play" onclick="watchNow('${d.t.replace(/'/g,"")}', ${ep})">
+          ▶️ ВКЛЮЧИТЬ ${ep} СЕРИЮ (SoftBox)
+        </button>
+        <div class="row-btns">
+          <button class="btn-sub" onclick="nextEp(${d.id}, ${d.ep})">➕ Я посмотрела ${ep} серию!</button>
+          <button class="btn-sub" onclick="toggleFav(${d.id})">${fav ? '💖 В моих' : '🤍 В закладки'}</button>
+        </div>
+        <div class="sites-bar">
+          <a class="site-chip" target="_blank" href="https://doramy.club/?s=${enc}">Doramy.club</a>
+          <a class="site-chip" target="_blank" href="https://doramalive.ru/search/?q=${enc}">DoramaLive</a>
+          <a class="site-chip" target="_blank" href="https://vk.com/video?q=${enc}%20SoftBox">VK Видео</a>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+render();
+</script>
+</body>
+</html>
